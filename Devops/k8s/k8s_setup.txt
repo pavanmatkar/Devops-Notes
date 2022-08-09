@@ -1,0 +1,124 @@
+++++++++++++++++++++++++++
+Kubernetes Cluster Setup
+++++++++++++++++++++++++++
+
+-> Create One Security group with Protocol as "All Traffic" Port Range as 0-65535
+
+-> Create 3 Ubuntu Servers using above created security group
+
+1 - Master Node ( t2.medium instance )
+
+2 - Worker Nodes ( t2.micro instances )
+
+
+++++++++++++++++++++++ Master & Slave  - Common Commands Execution Start ++++++++++++++++++++++++++
+
+Step-1 : Install Docker
+
+$ sudo apt-get update
+$ sudo apt-get install docker.io -y
+$ docker --version 
+$ sudo usermod -aG docker $USER 
+$ sudo systemctl start docker 
+$ sudo systemctl enable docker 
+
+
+Step-2 : Installing Kubernetes
+
+# install curl
+$ sudo apt install curl -y
+
+# Add the GPG Kubernetes key with the command:  
+$ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add 
+
+# To add the Xenial Kubernetes repository
+$ sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main" 
+
+# Installing Kubeadm (Kubernetes Admin)
+$ sudo apt-get install kubeadm kubelet kubectl kubernetes-cni -y
+
+# Run the below command to check whether the versions of the components installed are compatible
+$ sudo apt-mark hold kubeadm kubelet kubectl kubernetes-cni
+
+# Check Kubeadm version
+$ kubeadm version 
+
+# Disable swap memory
+$ sudo swapoff -a 
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl start kubelet
+$ sudo systemctl enable kubelet.service
+
+++++++++++++++++++++++ Master & Slave Common Commands Execution End ++++++++++++++++++++++++++
+
+
+  
+++++++++++++++++++++++ Only Master Node Commands Execution Start ++++++++++++++++++++++++++
+
+Step-3 : Running and Deploying Kubernetes
+
+# Initialize kubernetes on Master Node  
+$ sudo kubeadm init
+
+# You need to run the following as a normal user to start using your cluster
+
+$ mkdir  -p $HOME/ .kube 
+$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config 
+$ sudo chown $(id -u):$(id -g) $HOME/.kube/config 
+ 
+#check nodes connected to cluster
+$ kubectl get nodes
+
+# Deploy Pod Network to Cluster
+$ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+# Get worker token to add workers to cluster
+$ kubeadm token create --print-join-command
+[worker1]$sudo <token>
+[worker2]$sudo <token>
+
+# Add the slave node to form a cluster by executing token in worker nodes as root use
+
+{{kubeadm join 172.31.40.32:6443 --token pw52hv.birkhyrnaodwoguo --discovery-token-ca-cert-hash sha256:8875ed22eb1b4f9142b2376f97f56329d0c8ef3abc1fc9a0174db7965ccf3c6e}}
+
+# Get Nodes
+$ kubectl get nodes
+
+# Get the pods running
+$ kubectl get pods --all-namespaces 
+
+# To restart Kublet service
+$ sudo systemctl restart kubelet.service
+++++++++++++++++++++++++++++++++++++++++++
+kubectl
+-> launch a new EC2 vm
+-> install kubectl
+$curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+$chmod +x ./kubectl
+$sudo mv ./kubectl /usr/local/bin/kubectl
+$kubectl version
+$mkdir ~/.kube
+note: teke kube config file from master and keep it here 
+$cat ~/.kube/config
+$vi ~/.kube/config
+note: take kube config  file from master and keep it here
+$kubectl cluster-info
+$kubectl get nodes
++++++++++++++++++++++++++++++++++++++++++++++++++++
+Deploying an Application to the Kubernetes Cluster
++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+$ kubectl create deployment nginx --image=nginx
+
+$ kubectl describe deployment nginx
+
+$ kubectl create service nodeport nginx --tcp=80:80
+
+The command above will create a public-facing service for the Nginx deployment. This being a nodeport deployment, Kubernetes assigns the service a port in the range of 32000+.
+
+You can get the current services by issuing the command:
+$ kubectl get svc
+
+# Delete Kuberentes deployment
+$ kubectl delete deployment nginx
