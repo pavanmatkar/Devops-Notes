@@ -211,7 +211,7 @@ Working with Sonar Token
 -> Copy the token and configure that token in pom.xml file like below
 	
 	<sonar.host.url>http://3.110.114.186:9000/</sonar.host.url>
-	<sonar.login>9fc6f4ca85ff73ba18af2d0022e6b413c64556b6</sonar.login>
+	<sonar.login>760ebb6f81398a6ea6949adf4dc2291347377d3e</sonar.login>
 
 -> Then build the project using "mvn sonar:sonar" goal
 
@@ -273,7 +273,7 @@ Pre-Requisites
 
 => On Jenkins Server 
 		- install apache maven
-		- Install Sonar Plugin
+		- Install Sonar Qube Scanner Plugin
 		- Configure SonarServer with Token
 		- Install SonarQube Scanner
 		- Run Jenkins Pipeline Job
@@ -364,5 +364,90 @@ Sonar Integration with Maven Project
 Sonar Token Generation
 Sonar Server Integration with Jenkins Using Pipeline Script
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+pipeline{
+    agent any
+    tools { 
+        maven 'Maven 3.6.2' 
+        jdk 'JDK 8.0.2' 
+    }
+    environment {
+        PATH = "$PATH:/opt/apache-maven-3.6.3/bin"
+    }
+  
+
+    stages{
+       stage('GetCode'){
+            steps{
+                git branch: 'main',
+                url:'https://github.com/pavanmatkar/jenkins-project.git'
+            }
+         }        
+       stage('Build'){
+            steps{
+                sh 'mvn clean package' ///if gives error then give one clean package 
+            }
+         }
+
+        stage('SonarQube analysis') {
+//    def scannerHome = tool 'SonarScanner 4.0';
+        steps{
+        withSonarQubeEnv('Sonar-Server-7.8') { 
+        // If you have configured more than one global server connection, you can specify its name
+//      sh "${scannerHome}/bin/sonar-scanner"
+        sh "mvn sonar:sonar"
+    }
+        }
+        }
+       
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

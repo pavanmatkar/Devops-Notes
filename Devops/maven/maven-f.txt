@@ -241,7 +241,8 @@ How maven will downoad dependencies
 -> Local repository will be created in our system (Location : C://users/<uname>/.m2)
 
 
--> When we add dependency in pom.xml, maven will search for that dependency in local repository. If it is available it will add to project build path.
+-> When we add dependency in pom.xml, maven will search for that dependency in local repository. 
+If it is available it will add to project build path.
 
 -> If dependency not available in local repository then maven will connect to Central Repository or Remote Repository based on our configuration.
 
