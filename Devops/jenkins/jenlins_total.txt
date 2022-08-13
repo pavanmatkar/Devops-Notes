@@ -227,7 +227,7 @@ Note: With above steps we have created JENKINS Job
 Steps To Create Jenkins Job with Git Repo + Maven + Tomcat Server
 ------------------------------------------------------------------------------------------------------
 
-1) Go to Tomcat server folder and configure below users in "tomcat-users.xml" file (it will be available in tomcat -erver conf folder)
+1) Go to Tomcat server folder and configure below users in "tomcat-users.xml" file (it will be available in tomcat server conf folder)
 
 <role rolename="manager-gui" />
 <role rolename="manager-script" />
@@ -563,7 +563,7 @@ node {
 What is Jenkins Declarative Pipeline?
 +++++++++++++++++++++++++++++++++++++
 
-The Declarative Pipeline subsystem in Jenkins Pipeline is relatively new, and provides a simplified, opinionated synine subtax on top of the Pipelsystems.
+The Declarative Pipeline subsystem in Jenkins Pipeline is relatively new, and provides a simplified, opinionated syntax on top of the Pipeline subine subsystems.
 
 The latest addition in Jenkins pipeline job creation technique.
 
@@ -596,7 +596,7 @@ agent : Specify where the Jenkins build job should run. agent can be at pipeline
 
 stages : stages block constitutes different executable stage blocks. At least one stage block is mandatory inside stages block.
 
-stage : stage block contains the actual execution steps. Stage block has to be defined within stages block. It’s mandatory to have at least one stage block inside the stage block. Also its mandatory to name each stage block & this name will be shown in the Stage View after we run the job.
+stage : stage block contains the actual execution steps. Stage block has to be defined within stages block. It’s mandatory to have at least one stage block inside the stages block. Also its mandatory to name each stage block & this name will be shown in the Stage View after we run the job.
 
 steps : steps block contains the actual build step. It’s mandatory to have at least one step block inside a stage block.
 

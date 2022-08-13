@@ -1,0 +1,1411 @@
+######
+MAVEN#
+######
+-> java is a programming language
+-> java language developed by sun microsoft company
+-> oracle company acquired sun microsystem
+-> java is under license of oracle company
+-> java is a high level programming language
+-> java is simple programming language
+-> java program files will have .java as extension
+	ex: demo.java, hello.java, driver.java, calculator.java etc..
+-> we can't execute .java files directly
+-> java programs should be converted into machine understandable format to execute
+-> java programs (.java file) contains source code
+-> we need to compile java source code into byte code using java compiler (javac)
+	ex: javac demo.java
+-> when we compile java code it will create .class file
+-> we need to execute .class file to run the java program
+	ex: java Demo
+-> when we run java program using java command, JVM will start and it will execute java program
+	note: JVM stands for java vitual machine
+-> jvm will convert byte code into machine understandable code
+-> java project contains several java programs (.java files)
+-> we need to compile project source code into byte code
+-> when we compile project source code we will get .class files
+-> to deploy java project, we will package all .class files as JAR or WAR file
+	JAR : Java Archieve
+	WAR : Web Archieve
+-> standalone java projects will be packaged as JAR file
+-> web applications will be packaged as WAR file
+
+Maven
++++++
+-> maven is a free source and open source software given by Apache Organization
+-> maven s/w is developed using Java programming language
+-> maven is used to perform build automation for java projects
+-> maven is called as java build tool
+
+what we can do using maven
+++++++++++++++++++++++++++
+1) we can create initial project folder structure using maven
+2) we can download "project dependencies" using maven
+	(ex : springboot, hibernate, kafka, redis, email, log4j, junit, security...)
+-> to develop one java project we will user several frameworks like spring, hibernate etc along with java
+-> we need to download those frameworks and we should add to our java project
+-> these frameworks we are using in our prject are called as our project dependencies
+-> instead of we are downloading dependencies, we can tell to maven s/w to download dependencies
+note: required dependencies we will add in "pom.xml" file then maven s/w will download them
+-> pom stands for project object model
+-> when we create maven project then pom.xml file will be created automatically
+-> pom.xml will act as input file for maven software
+3) we can compile project source code using maven
+4) we can package java project as jar or war file using maven
+
+Maven Installation
+++++++++++++++++++
+1) download and install java software
+-> when we install java we will get below 2 things
+	a) JDK (java development kit)
+	b) JRE (java runtime environment)
+-> JDK contains set of tools to develop java program
+-> JRE contains platform /environment which is used to run java programs
+Link to downalod java: https://www.oracle.com/in/java/technologies/javase/javase8-archive-downloads.html
+2) set JAVA_HOME in environment variables (system env variables)
+	user environment variables: specific to particular account which logged in our pc
+	system environment variables : for all accounts
+note: environment variables will be used by operating system
+	JAVA_HOME = c:\Program Files\Java\jdk1.8.0_202
+3) set path for JAVA (Go to system env variables -> env variables -> system variables -> selct path and click on edit then add JDK path)
+	Path = C:\Program Files\Java\jdk1.8.0_202\bin
+4) verify java installation by executing below command in "command prompt"
+	> java -version
+note: it should display java version which we have installed
+5) download maven software from apache website
+	Link to download Maven : https://maven.apache.org/download.cgi
+	File Name: apache-maven-3.8.5-bin.zip (Binary Archive)
+6) Extract Maven Zip file -> copy extracted maven folder and paste it in "C" drive
+7) set MAVEN_HOME in System Environment variables
+	MAVEN_HOME = C:\apache-maven-3.8.5
+8) Set Path for Maven in System Environment Variables
+	Path : C:\apache-maven-3.8.5\bin
+9) Open command prompt and verify maven nstallation using below command
+	> mvn -version
+-----------------------------------------------------------------------------
+Maven Terminology
++++++++++++++++++
+archetype
+groupId
+artifactID
+packaging
+
+-> Archetype represents what type of project we want to create
+	-> maven-archetype-quickstart : It represents java standalone application
+	-> maven-archetype-webapp : It represents java web application
+Note: Maven providing 1500++ archetypes
+-> groupID represents company name or project name
+-> artifactID represents project name or project module name
+-> packaging represents how we want to package our java application (jar or war)
+
+Creating standalone application using maven
++++++++++++++++++++++++++++++++++++++++++++
+1) create one folder for maven practice
+2) open command prompt from that folder
+3) execute below command to create maven project
+
+>> mvn archetype:generate -DarchetypeArtifactId=maven-archetype-quickstart -DgroupId=in.ashokit -DartifactId=01-maven-app -DinteractiveMode=false
+
+>> mvn archetype:generate -DarchetypeArtifactId=maven-archetype-webapp -DgroupId=in.ashokit -DartifactId=01-maven-web-app -DinteractiveMode=false
+
+4) once project created verify project folder structure
+	01-Maven-App
+		   - src
+                       - main 
+                               - java
+                       - test 
+                               - java
+                - pom.xml
+       src/main/java : Application source code (.java files)
+       src/test/java : Application unit test code (.java files)
+       pom.xml : project object model (maven configuration file)
+5) we can add dependencies in pom.xml file
+6) we can find maven dependencies in www.mvnrepository.com website
+7) add below dependency in pom.xml file
+
+<dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-core</artifactId>
+	<version>5.2.22.RELEASE</version>
+</dependency>
+
+How maven will download dependencies
++++++++++++++++++++++++++++++++++++++
+-> maven will download dependencies using repository
+-> in maven we have 3 types of repositories
+	1) central repository
+	2) remote repository
+	3) local repository
+-> central repository is maintained by apache organization
+-> every company will maintain their own remote repository
+-> local repository will be created in our system (location : c://users/<uname>/.m2)
+
+-> when we add dependency in pom.xml, maven will search for that dependency in local repository. if it is available it will add to project build path.
+-> if dependency not available in local repository then maven will connect to central repository or remote repository based on our configuration.
+
+note: by default maven will connect with central repository. if we want to use remote repository then we need to configure remote repository details.
+
+note: every software company will maintain their own remote repository (ex: jfrog)
+
+Configuring remote repository
++++++++++++++++++++++++++++++
+<repositories>
+	<repository>
+		<id>id</id>
+		<url>jfrog-repo-url</url>
+</repositories>
+
+Maven Goals
++++++++++++
+-> to perform project build activities maven provided several goals for us
+
+clean 
+compile
+test
+package
+install
+
+-> clean goal is used to delete target folder
+-> compile goal is used to compile source code. compiled code will be stored in target folder
+						compile
+                     .java -----------> .class
+-> test goal is used to execute unit test code of our application (junit code)
+-> package goal is used to generate jar or war file for our application based on packaging type available in pom.xml file.
+
+note: jar or war file will be created in target folder.
+
+-> install goal is used to execute unit test code of our application (junit code)
+-> package goal is used to generate jar or war file for our application based on pacaging type available in pom.xml file.
+
+note: jar or war file will be created in target folder
+
+-> install goal is used to install our project as a dependency in maven local repository.
+
+note: every maven goal is associated with maven plugin. when we execute maven goal then respective maven plugin will execute to perform the operation.
+
+syntax : mvn <goal-name>
+
+note : we need to execute maven goals from project folder
+
+creating web application using maven
+++++++++++++++++++++++++++++++++++++
+>> mvn archetype:generate -DarchetypeArtifactId=maven-archetype-webapp -DgroupId=in.ashokit -DartifactId=01-maven-web-app -DinteractiveMode=false
+------------------------------------------------------------------------------
+
+what is java?
+what is source code?
+what is byte  code?
+what is machine understandable code?
+java program execution process
+what is JDK
+what is JRE
+what is JVM
+
+what is project dependency? (Ex : hibernate, spring, kafka, redis etc)
+
+what is maven 
+what are the advantages of maven
+
+java installation
+setting JAVA_HOME & JDK PATH
+maven installation
+setting MAVEN_HOME & Maven Path
+
+Maven Terminology
+	- archetype
+	- groupId
+	- artifactId
+	- version
+	- packaging
+
+pom.xml
+adding dependency in pom.xml
+java standalone project creation using maven
+maven project folder structure
+java web application creating using maven
+maven repositories
+	- local repository
+	- central repository
+	- remote repository
+
+maven goals
+	- clean
+	- compile
+	- test
+	- package
+	- install
+
+Maven Plugins
+----------------------------------------------------------------------------------
+#########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
+----------------------------------------------------------------------------------
+####
+GIT#
+####
+
+source code repository tools (or) version control software
+----------------------------------------------------------
+-> multiple developers will work for project development
+-> developers will be working from multiple locations
+-> all developers code should be sotre at one place (code integration should happen)
+-> to integrate all the developers source code at one place we will use surcecode repository softwares
+
+advantages with source code repository softwares
+------------------------------------------------
+1. all the developers can connect to repository server and can integrate the code
+2. repository server will provide monitored access
+	- who
+	- when
+	- why
+	- what
+
+repository tools
+----------------
+svn (outdated)
+git hub
+bitbucket
+
+environment setup to work with git hub
+--------------------------------------
+1. create github account (www.github.com)
+2. download and install git client software (https://git-scm.com/downloads)
+3. once installation completed, right click on the mouse and verify git options display (if git options displaying our git client installation completed successfully)
+
+working with github
+-------------------
+-> login into github account with your credentials
+-> create repository in github
+note: repository is used to store project source code. every project will have one repository
+-> when we create a repository, unique url will be generated with repository name (i.e. repo url)
+-> all the developers will connect to repository using repository url
+-> we can create 2 type of repositories in github
+	1) public repository
+	2) private repository
+-> public repository means everybody can access but we can choose who can modify our repository
+-> private reporitory means we will choose who can access and who can modify 
+	repo url: https://github.com/ashokitshool/01-devops-app.git
+
+working with git bash
+---------------------
+-> git bash we can use as git client software to perform git operations
+-> download and install git client (https://git-scm.com/downloads)
+-> right click on mouse and choose "open git bash here"
+
+git help : it will display frequently used git commands
+git help <cmd-name> : it will open documentation for given command
+
+configure your email and name in git bash with commands
+-------------------------------------------------------
+$ git config --global user.email "youremail@yourdomain.com"
+$ git config --global user.name "name"
+
+$ git init : to initialize our folder as git working tree folder
+$ git clone : to clone git repository to our machine froom github.com
+	syntax : $ git clone <project-repo-url>
+$ git status : it will display staged, un-staged and un-tracked files
+	syntax : $ git status
+	stages files : the files which are added for commit
+	un-staged files : the files which are modified but not added for commit.
+	un-tracked files : newly created files
+note: to commit a file(s), we should add to staging area first
+$ git add : it is used to add file(s) to staging area
+	syntax : $ git add <file-name>
+		   $ git add .
+$ git commit : it is used to commit staged files to git local repository
+	syntax : $ git commit -m "reason for commit"
+$ git push : to push changes from git local repository to git central repository
+	syntax : $ git push
+
+steps to push code to github central repository
+-----------------------------------------------
+1) create one public repository in git hub (take github repo url)
+2) clone github repository using 'git clone' command
+	$ git clone 'repo-url'
+3) nevigate to repository folder
+	$ cd <project-name>
+4) create one file in repository folder
+	$ touch demo.java
+5) check status of the file using 'git status' command
+	$ git status (it will display as untracked file)
+6) add file to staging area using 'git add' command
+	$ git add .
+7) commit file to git local repository
+	$ git commit -m "commit-msg"
+8) push file from git local reposiroty to git central repository using "git push" command
+	$ git push
+note: if you are doing 'git push' for first time it will ask to enter your github account password
+
+-------------------------------------------------
+note: git bash will ask our password only for first time. it will save our git credentials in credential manager in windows machine.
+-> go to credential manager -> windows credentials -> select github -> we can modify and delete saved credentials from here
+-------------------------------------------------
+
+-> when we do git commit then it will generate a commit-id with 40 characters length
+-> from this commit-id it will display first 7 characters in git hub central repository
+-> we can check commit history using 'git log' command
+-------------------------------------------------
+steps to commit maven project to github repository
+-------------------------------------------------
+1) create maven project
+2) create github repository
+note: after creating git repository, it will display set of commands to execute
+3) open gitbash from project folder and execute below commands
+
+$ git init
+$ git status
+$ git add .
+$ git commit -m 'commit-msg'
+$ git branch -M main
+$ git remote add origin <repo-url>
+$ git push -u origin master
+--------------------------------------------------
+what we learned so far 
+
+git help
+git config
+git init
+git status
+git add .
+git restore
+git commit -m 'msg'
+git push
+git clone
+git log
+git remote add
+--------------------------------------------------
+
+when we are working on one task suddenly we may get some other priority task.
+
+usecase
+-------
+-> manager assigned task id : 101
+-> i am working on that task (i am in middle of the task)
+-> manager told that stop the work for 101 and complete 102 on prioriy.
+-> once 102 is completed then resume your own work on 101
+
+-> when manager asked me to start 102 task, i have already done few changes for 101
+(partially completed)
+
+-> we can't push partial changes to repository because with our partial changes existing functionality may break.
+
+-> we can't delete our changes because we have spent few hours of time to implement those changes
+
+--------------------------------
+in this scenario we will got for 'git stash' option
+--------------------------------
+
+-> git stash is used to save working tree changes to temporary location and make working tree clean
+-> after priority work completed we can get stashed changes back using 'git stash apply'
+
+--------------------------------------------
+Git Branches
+--------------------------------------------
+-> branches are used to maintain separate code bases for our project
+-> in git repository we can create multiple branches
+main
+develop
+qa
+release
+research
+
+-> development team will integrate the code in 'develop' branch
+-> bug-fixing team will integrate the code in 'qa' branch
+-> R & D team will integrate the code in 'research' branch
+
+-> in github we can create branches
+-> to clone particular branch in git repo we will use below command
+	$ git clone -b <branch-name> <repo-url>
+---------------------------------------------------------
+what is git branch?
+why we need git branches?
+how to create git branches?
+how to clone particular branch?
+how to switch from one branch to another branch?
+----------------------------------------------------------
+
+Branch Merging
+--------------------------------------------------------
+-> the process of merging changes from one branch to another branch is called as Branch merging
+
+steps to do branch merging
+--------------------------
+1) create feature branch from main branch
+2) clone feature branch
+3) create new file in feature branch then commit and push to central repo
+4) go to central repository then create pull request to merge feature branch changes to main branch
+
+note: once feature branch changes are merged to main branch then we can delete feature branch (if required)
+
+-----------------------------------------------------
+what is .gitignore ? 
+-----------------------------------------------------
+-> this .gitignore is used to configure the files or folders which we want to ignore from our commits
+-> the files and folders which are not required to commit to central repository those things we can configure in .gitignore file
+
+ex. in maven project 'target' folder will be available which is not required to commit to central repository. this we can configure in .gitignore file.
+
+---------------------------------.gitignore--------------------------------
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+--------------------------------------------------------------------
+git merge vs git rebase
+--------------------------------------------------------------------
+-> these commands are used to merge changes from one branch to another branch
+-> git merge will maintain commit history
+-> git rebase will not maintain that commit history
+-> when we are working on particular sprint and we want to merge changes from one branch to another branch then we will use 'git merge' command
+-> once sprint-1 is delivered then we want to take latest code of sprint-1 to start sprint-2 development. in this scenario we don't need commit history so we will use 'git rebase' command.
+-----------------------------------------------------------------------------
+what is git pull command
+-----------------------------------------------------------------------------
+-> pull command is used to take latest changes from repository to local 
+-> when we want to make some changes to code, it is always recommended to take git pull
+
+note: when we execute 'git pull' there is a chance of getting conflicts. we need to resolve the conflicts and we should push the code without conflicts.
+------------------------------------------------------------------------------
+what is souce code repository
+why we need source code repository
+what are the source code repository servers available
+what is code integration
+what is monitored access
+what is git hub
+what is git
+what is version control
+what is repository
+public repository vs private repository
+cloning repository
+staged vs unstaged vs untracked file
+adding files to staging area
+unstaging the files from staging
+discarding local changes
+what is working tree
+what is local repository
+what is central repository
+commit from working tree to local repo
+push from local repo to central repo
+taking latest code changes
+push vs pull
+what is conflict
+how to resolve conflicts
+what is branch in git hub
+how to create branches
+how to clone particular branch
+how to switch to particular branch
+how to merge branches
+what is pull request
+git merge vs rebase
+what is .gitignore
+
+git init
+git help
+git config
+git clone
+git status
+git add .
+git add <file-name>
+git restore
+git commit
+git push
+git pull
+git log
+git rm
+git branch
+git checkout
+git merge
+git rebase
+--------------------------------------------------------
+assignment
+--------------------------------------------------------
+**Assignment**
+--------------------------------------------------------
+1) create maven web application
+2) added "spring-core" dependency in project pom.xml file
+3) package maven project as war file using maven goal
+4) create git repository in github.com (public repo)
+5) push maven project into github repo using gitbash
+	(target folder shouldn't be commited, add this in .gitignore file
+6) make changes in pom.xml and push changes to github repo using git bash
+7) create 'feature' branch in git repo from main branch
+8) clone feature branch from git bash using git clone
+9) make changes in 'feature' branch pom.xml file and push changes to central repo
+10) create pull request and merge 'feature' branch changes to 'main' branch
+----------------------------------------------------------------------------------
+#########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
+----------------------------------------------------------------------------------
+#####################
+Apache Tomcat Server#
+#####################
+-> apache tomcat is a web server
+-> apache tomcat is used to run java web applications
+-> apache tomcat is free & open source
+-> apache tomcat runs on 8080 port by default (we can change that port)
+
+Apache tomcat folder structure
+++++++++++++++++++++++++++++++
+bin : it contains commands to start and stop tomcat server
+conf : it contains configuration files
+lib : it contains libraries (jar files)
+logs : it contains server log files
+temp : temp files will be created here (we can delete them)
+webapps: this is called as deployment folder
+note : we will keep war file in webapps folder for deployment
+
+working with apache tomcat in linux
++++++++++++++++++++++++++++++++++++
+-> login into aws management console
+-> create ec2 instance (amazon linux ami)
+-> connect to ec2 instance using mobaextrm / putty
+-> install java software using below commands
+	$ sudo yum install java-1.8.0-openjdk
+-> verify the version of jave installed in our machine
+	$ java -version
+note: if we have multiple java versions installed then we can switch to particular version using below command
+	$ alternatives --config java
+-> we can download apache tomcat from official website
+	url : "https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz"
+-> we can find apache tomcat urls to download in official website downloads page
+-> copy the url of tar file and execute below command in linux machine
+	$ wget <tomcat-tar-file-url>
+note: I am using
+	"https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz"
+-> after tomcat tar file got downloaded then extract tomcat tar file using below command
+	$ tar -xvf <tomcat-tar-file-name>
+-> go inside tomcat folder and see folder structure
+	$ cd tomcat-folder
+	$ ls -ltr
+-> go to tomcat bin directory and run tomcat server
+	$ cd bin
+	$ ./startup.sh
+note: tomcat server runs on 8080 port by default. enable this port in security group as custom TCP 
+type : custom TCP
+protocol : TCP
+port range : 8080
+source : custom (0.0.0.0/0)
+-> access tomcat server from your browser
+	URL : http://ec2-vm-public-ip:8080/
+note: it should open tomcat server home page
+----------------------------------------------------------------------------------
+
+-> by default the host manager is only accessible from a browser running on the same machine as tomcat. if you want to modify this restriction, you'll need to edit the Host manager's context.xml file.
+
+-> file location: <tomcat>/webapps/manager/META-INF/context.xml
+-> in manager context.xml file, change <valve>section like below  (allow attribute value changed)
+<context antiresourceLocking="false" priviledged="true">
+<valve classname="org.apache.catalina.valves.remoteaddrvalve" allow".*" />
+</context>
+
+add tomcat users in 'tomcat-folder/conf/tomcat-users.xml" file like below
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+<role rolename="manager-gui"/>
+<user username="tomcat" password="tomcat" roles="manager-gui"/>
+<role rolename="admin-gui"/>
+<user username="admin" password="admin" roles="manager-gui,admin-gui"/>
+-------------------------------------------------------------------------
+
+-> stop the tomcat server and start it
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+we can change tomcat server default port in tomcat/conf/server.xml file
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-> when we change tomcat port number in server.xml file then we have to enable that port in security group which is associated with our ec2 instance
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+steps to display maven web application in tomcat server
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1) create maven web application
+2) edit "index.jsp" file like below (file location : project-folder\src\main\webapp)
+
+<html>
+<body>
+<h2><font color="red"> welcome to ashok it..!!</font></h1>
+<h2>Learn here.. Lead anywhere..!!</h2>
+
+<a href="https://ashokitech.com/online-training-schedules">Click Here To See Training Schedules</a>
+</body>
+</html>
+----------------------------------------------------------------------------------
+
+3) package maven web application as war file using maven goals
+	$ mvn clean package
+4) go to tomcat server admin dashboard and click on "manager app"
+5) select war file to upload and click on 'deploy" button
+6) war file will be deployed and it will display in applications
+7) click on application path (it will open the application in browser)
+
+----------------------------------------------------------------------------------
+
+conclusion
+++++++++++
+-> stop apache tomcat server
+-> stop ec2 instance
+----------------------------------------------------------------------------------
+#########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
+----------------------------------------------------------------------------------
+########
+Jenkins#
+########
+
+what is jenkins?
+-> jenkins is an open source automation tool for CI and CD
+-> jenkins tool developed using java
+-> jenkins is part of hudson project
+-> initially it is called as hudson then later it renamed to jenkins
+
+About CI CD
++++++++++++
+-> CI and CD are two most frequently used terms in modern development practices and devops practices.
+-> CI stands for Contineous Integration. it is fundamental devops best practice where developers frequently merge code changes to central repository where automated builds and test runs.
+-> CD means contineous delivery or contineous deployment
+-> jenkins is a self-contained, open-source automation server which can be used to automate all sorts of tasks related to building, testing, and delivery or deploying software.
+
++++++++++++++++++++++++++++++++++++++
+build and deployment process
++++++++++++++++++++++++++++++++++++++
+1) take latest source code from repository --> git
+2) compile source code --> maven
+3) execute unit tests (Junits) --> apache,selenium
+4) perform code review --> sonar qube
+5) package code as war file --> maven
+6) deploy the war file into server --> tomcat
+
+note : all the above build and deployment tasks can be automated using jenkins tool
+
+components of jenkins :
++++++++++++++++++++++++
+master node : the system where you install and run jenkins
+managed node : target systems managed by jenkins
+repository : version controlled system where you keep your code.
+UI : user interface to manage and configure jenkins.
+Pipeline : means of contineous deployment of your code to target systems from the version control system.
+plugins : means of enhancing the functionality of a jenkins.
+
+jenkins installation : 
+++++++++++++++++++++++
+prerequisite : 
+	one ec2 amazon linux 2 instance with internet access 
+	java 8 runtime environments
+
+step 1
+------
+jenkins installation on aws ec2
++++++++++++++++++++++++++++++++
+create an ec2 instance with amazon linux 2 ami
+amazon linux 2 ami (HVM), SSD volume type
+connect to your ec2 instance
+
+#update all packages
+	$ sudo yum update -y
+#install java
+	$ sudo yum install java-1.8.0-openjdk-devel
+	$ sudo amazon-linux-extras install java-openjdk11 --> jenkins now runs on java 11 gives error in java 8)
+	$ sudo alternatives --config java --> (for setting default jenkins version)
+
+step 2 
+------
+Jenkins installation on aws ec2 using yum
++++++++++++++++++++++++++++++++++++++++++
+#add jenkins repo to your yum repository
+$ sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat/jenkins.repo
+
+#import a key file from jenkins-CI to enable installation from the package
+$ sudo rpm --import https://pkg.jenkins.io/redhat/jenkins.io.key
+
+#for amazon linux 2
+$ sudo amazon-linux-extras install epel
+
+#install jenkins
+$ sudo yum install jenkins -y
+
+#start and enable jenkins service
+$ sudo systemctl start jenkins
+$ sudo systemctl enable jenkins
+$ sudo systemctl status jenkins
+
+#get the initial administrative password
+$ sudo cat /var/bin/jenkins/secrets/initialAdminPassword
+
+pwd : 5fe6ddcc9db244cab6aca5ccf2d6a83a
+
+step 3 :
+--------
+open your ec2 instance public dns or public ip (http://<public-dns/public-ip>:8080/) along with port 8080 in your favorite browser. and provide the administrative password obtained during the installation.
+
+note: make sure you enabled 8080 port in security group inboud rules which is attached to ec2 instance.
+	url : http://43.204.214.21:8080/
+-> provide pwd which we have copied to unlock jenkins
+-> select 'install suggested plugins' card (it will install those plugins)
+-> create admin account
+
+++++++++++++++++++++++++++++++++++++++++++++
+creating first job in jenkins
+++++++++++++++++++++++++++++++++++++++++++++
+1) goto jenkins dashboard
+2) click on new item
+	-> enter item name (job name)
+	-> select free style project & click ok
+	-> enter some description
+	-> click on 'build tab'
+	-> click on 'add build step' and select 'execute shell'
+3) enter below shellscript
+echo "Hello Guys,"
+touch ashokit.txt
+echo "Hello Guys, Welcome to Jenkins Classes" >> ashokit.txt
+echo "Done..!!"
+4) apply and save
+note: with above steps we have created jenkins job
+5) click on 'build now' to start job execution
+6) click on 'build number' and then click on 'console output' to see job execution details.
+
+-> jenkc2 : /ins Home Directory in Evar/lib/jenkins/workspace
+	$ cd /var/lib/jenkins/workspace/
+7) go to jenkins home directory and check for the job name --> check the file created inside the job
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+jenkins job with git hub repo + maven - integration
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+prerequisites: java, git & maven
+
+git installation in ec2: 
+------------------------
+$ sudo yum install git -y
+
+JDK installation in jenkins:
+---------------------------
+jenkins dashboard -> manage jenkins -> global tools configuration -> add JDK -> choose JDK 8 -> configure oracle account credentials to download JDK.
+
+maven installation in jenkins:
+------------------------------
+jenkins dashboard -> manage jenkins -> global tools configuration -> add maven
+
+sample git repo urls for practice
+git hub repo url-1 : https://github.com/ashokitschool/JAVA-MAVEN-WEB-APP.git
+git hub repo url-2 : https://github.com/ashokitschool/maven-web-app.git
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+steps to create jenkins job with git repo + maven
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1) connect to ec2 instance in which jenkins server got installed
+2) start jenkins server
+3) access jenkins server dashboard and login with your jenkins credentials
+4) create jenkins job with git hub repo
+	-> new item
+	-> enter item name (job name)
+	-> select free style project and click ok
+	-> enter some description
+	-> go to "source code management" tab and select 'git'
+	-> enter project 'git repo url'
+	-> add your github account credentials
+	-> go to "build tab"
+	-> click on add build step and select 'invoke top level maven targets'
+	-> select maven and enter goals 'clean package'
+	-> click on apply and save
+note: with above steps we have created jenkins job
+5) click on 'build now' to start job execution
+6) click on 'build number' and then click on 'console output' to see job execution details.
+-> jenkins home directory in ec2 : /var/lib/jenkins/workspace/
+-> go to jenkins workspace and then go to job folder then goto target folder then see war file created.
+-----------------------------------------------------------------------------------------------------
+
+-> access below url in browser to stop jenkins server
+	url : //http://ec2-vm-ip:8080/exit
+	(click on retry using post button)
+-----------------------------------------------------------------------------------------------------
+steps to create jenkins job with git repo + maven + tomcat server
+-----------------------------------------------------------------------------------------------------
+1) go to tomcat server folder and configure below users in 'tomcat-users.xml' file (it will be available in tomcat sever conf folder)
+
+<role rolename='manager-gui'/>
+<role rolename='manager-script'/>
+<role rolename='admin-gui'/>
+<user username='tomcat' password='tomcat' roles='manager-gui'/>
+<user username='admin' password='admin' roles='manager-gui,manager-script,admin-gui'/>
+
+2) go to jenkins dashboard -> manage jenkins -> manage plugins -> go to available -> search for 'deploy to container' plugin -> install it
+
+3) create jenkins job
+	-> new item
+	-> enter item name (job name)
+	-> select free style project and click ok
+	-> enter some description
+	-> go to 'source code management' tab and select 'git'
+	-> enter project 'git repo url'
+	-> add your github account credentials
+	-> go to 'build tab'
+	-> click on add build step and select 'invoke top level maven targets'
+	-> select maven and enter goals 'clean package'
+	-> click on 'post build action' and select 'deploy war/ear to container' option
+	-> give path of war file (you can give like this also : **/*.war)
+	-> enter context path (give project name)
+	-> click on 'add container' and select tomcat version 9.x
+	-> add tomcat server credentials (give the username & pwd which is having manager-script role)
+	-> enter tomcat server url (http://ec2-vm-ip:tomcat-server-port)
+	-> click on apply and save
+4) run the job now using 'build now' option and see 'conole output' of job
+5) once job executed successfully, go to tomcat server dashboard and see application should be displayed
+6) click on the application name (it should display our application)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+jenkins pipeline
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-> sequence of jobs execution is called as pipeline
+-> for our application, we will have multiple environments like below
+	-> dev -- development environment
+	-> sit -- system integration testing
+	-> uat -- user integration testing
+	-> pilot -- prepod environment
+	-> prod -- final environment
+-> for every environment, one jenkins job will be created
+	jenkins-dev-job -> dev environment (dev server)
+	jenkins-sit-job -> sit environment (sit server)
+	jenkins-uat-job -> uat environment (uat server)
+	jenkins-pilot-job -> pilot environment (pilot server)
+	jenkins-prod-job -> prod environment (prod server)
+-> if we want to deploy code changes to all environments then it is recommended to create build pipeline
+-> by using build pipeline we can execute jenkins jobs sequentially
+
+requirement
++++++++++++
+-> if code commit happened in git hub then deploy code into dev server
+-> if dev server deployment successful, then deploy code into sit environment
+-> if sit server deployment successful, then deploy code into uat environment
+
+steps to create jenkins pipeline
+++++++++++++++++++++++++++++++++
+1) create ec2 vm and install tomcat server (dev server vm)
+2) create ec2 vm and install tomcat server (sit server vm)
+3) create ec2 vm and install tomcat server (uat server vm)
+4) create ec2 vm and install jenkns (jenkins server vm)
+5) install jdk, maven, git,deploy to container in jenkins server vm
+6) build pipeline plugin
+7) create jobs in pipeline server
+	dev-job -> dev server
+	sit-job -> sit server (sit job should execute if dev-job is stable)
+	uat-job -> uat server (uat job should execute if sit-job is stable)
+8) create jenkins build pipeline to execute jobs in sequence
+-----------------------------------------------------------------------------------------------------
+*** if we forgot jenkins passowrd, then how to recover it ? ***
+-> go to /var/lib/jenkins/
+	open : config.xml file
+-> set value for useSecurity as false
+	ex : <useSecurity>false</useSecurity>
+-> re-start jenkins and try to access
+
+*********** how to change jenkins port number ************
+-> go to root directory
+-> go to /etc/sysconfig
+-> open jenkins file and change jenkins port number
+-> restart jenkins server
+-----------------------------------------------------------------------------------------------------
+how to create jenkins jobs with build parameters
+-----------------------------------------------------------------------------------------------------
+-> create new item 
+-> enter item name & select free style project
+-> select 'this project is parameterized' in general section
+-> select choice parameter
+-> name : branch name
+-> choices :  enter every branch name in nextline
+-> branches to build : */${branch name}
+-----------------------------------------------------------------------------------------------------
+creating users in jenkins
+-----------------------------------------------------------------------------------------------------
+-> manage jenkins -> manage users
+-> create user
+note: 2 developer users and 2 devops users
+-> go to /var/lib/jenkins/users
+-> view users.xml file (you can see user accounts created)
+-> configure global security for users
+
+exercise
+++++++++
+-> create 1 account for devops team member
+-> create 1 account for development team member
+
+-> configure roles for devops team member and developmemt team member
+-----------------------------------------------------------------------------------------------------
+jenkins master and slave configuration
+-----------------------------------------------------------------------------------------------------
+when we build the jenkins job in a single jenkins master node then jenkins uses the resource of the base machine and if no executor is available then the jobs are qued in jenkins server.
+
+sometimes you might need several different environments to test your builds. this cannot be done by a single jenkins server.
+
+it is recommended not to run different jobs in the same system that required a different environment.
+in such scenarios where we need a different machine with a different environment that takes the specific job from the master to build
+
+on the same jenkins setup, multiple teams are working with their jobs. all jobs are running on the same base operating system and the base operating system has limited resources.
+
+to overcome this problem, jenkins provided distributed architecture i.e. jenkins master slave architecture
+
+jenkins uses a master-slave architecture to manage distributed builds. the machine where we install jenkins software will be jenkins master and that runs on port 8080 by default. on the slave machine, we install a program callled agent. this agent requires jvm. this agent executes the task provided by jenkins master. we can launch n numbers of agents and we can configure which task will be run on which agent server from jenkins master by assigning the agent to the task.
+
+jenkins master
+++++++++++++++
+your main jenkins server is the master. the master's job is to handle:
+a) scheduling build jobs.
+b) dispatching builds to the slaves for the actual execution.
+c) monitor the slaves (possibly taking them online and offline as required).
+d) recording and presenting the build results.
+e) a master instance of jenkis can also execute build jobs directly
+
+jenkins slave
++++++++++++++
+a slave is a java executable that runs on a remote machine. following are the characteristics of jenkins slaves.
+1) it hears requests from the jenkins master instance.
+2) slaves can run on a variety of operating systems.
+3) the job of a slave is to do as they are told to, wich involves executing build jobs dispatched by the master.
+4) you can configure a project to always run on a particular slave machine or a particular type of slave machine, or simply let jenkins pick the next available slave.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+working with jenkins master slave architecture
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+step1: create jenkins master
+----------------------------
+1) create ec2 instance
+2) connect ec2 using mobaxterm
+3) install git client
+4) install git java software
+5) install jenkins server
+6) add git, jdk and maven plugins
+7) enable jenkins port number in security group
+8) access jenkins server in browser and login
+
+step2: create jenkins slave
++++++++++++++++++++++++++++
+1) create ec2 instance
+2) connect to ec2 using mobaxterm
+3) install git client
+4) install java software
+5) create one directory in /home/ec2-user (ex: slavenode)
+
+step3: configure slave node in jenkins master node
+++++++++++++++++++++++++++++++++++++++++++++++++++
+1) go to jenkins dashboard
+2) go to manage jenkins
+3) go to manage nodes & clouds
+4) click on 'new node' -> enter node name -> select permanent agent
+5) enter remote root directory (/home/ec2-user/slavenode)
+6) enter label name as slave-1
+7) select launch method as 'launch agent via ssh'
+8) give host as 'slave vm dns url'
+9) add credentials (select kind as : ssh username with private key)
+10) enter username as : ex2-user
+11) select private key as enter directly and add private key
+
+note: open gitash from your .pem file location and execute below command to get private key from pem file
+	$ cat <key-pair-file-name>.pem
+note: it will display private key on git bash terminal (just copy and paste in jenkins)
+12) select host key strategy as 'manually trusted key verification strategy'
+13) click on apply and save (we can see configure slave)
+
+**************with above steps master and slave configuration completed************************
+-> go to jenkins server and create jenkins job
+note: uder generation section of job creation process, select 'restrict where this project can run'
+and enter slave node1 label name and finish job creation
+
+-> execute the job using 'build now' option
+note: job will be executed on slave node (go to job console output and verify execution details)
+
+++++++++++++++++++++++
+jenkins - pipeline
+++++++++++++++++++++++
+jenkins piepline is an automation solution that lets you create simple or complex pipelines.
+jenkins pipeline is a combination of plugins which automates number of tasks and makes the ci/cd pipeline efficient, high in quality and reliable.
+jenkins provides two ways of developing a pipeline
+1) scripted
+2) declarative
+traditionally, jenkins jobs were created using jenkins ui called freestyle jobs.
+in jenkins 2.0, jenkins introduced a new way to create jobs using the technique called pipeline as code.
+
+in pipeline as code technique, jobs are created using a script file that contains the steps to be executed by the job. -> git + maven +tomcat + sonarqube
+
+in jenkins, that scripted file is called as jenkins file
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+what is jenkinsfile?
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+jenkinsfile is nothing but a simple text file which is used to write the jenkins pipeline and to automate the continuous integration process
+
+jenkinsfile usually checked in along with the project's source code in git repo. ideally, every application will have its own jenkinsfile.
+
+jenkinsfile can be written in two ways - 
+
+1) scripted pipeline syntax
+2) declarative pipeline syntax
+
++++++++++++++++++++++++++++++++++++++++++++++++++++
+what is jenkins scripted pipeline?
++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+jenkins pipeline are traditionally written as scripted pipeline. ideally, the scripted pipeline is stored in jenkins webUI as a jenkins file. the end-to-end scripted pipeline script is written in groovy.
+
+it requires knowledge of groovy programming as a prerequisite
+jenkinsfile starts with the word node
+can contain standard programming constructs like if-else block, try-catch block, etc.
+
+++++++++++++++++++++++++++++++
+sample scripted pipeline
+++++++++++++++++++++++++++++++
+node {
+	stage('Stage 1'){
+		echo 'hello'
+        }
+}
+
+++++++++++++++++++++++++++++++++++++++
+what is jenkins declarative pipeline?
+++++++++++++++++++++++++++++++++++++++
+
+the declarative pipeline subsystem in jenkins pipeline is relatively new, and provides a simplified, opinionated syntax on top of the pipeline subline subsystems.
+
+the latest addition in jenkins pipeline job creation technique
+
+jenkins declarative pipeline needs to use the predefined constructs to create pipelines. hence, it is not flexible as a scripted pipeline.
+
+jenkinsfile starts with the word pipeline.
+
+jenkins declarative pipeline should be the preferred way to create a jenkins job as they offer a rich set of features, come with less learning curve & no prerequisite to learn programming language like groovy just for the sake of writing pipeline code.
+
+we can also validate the syntax of the declarative pipeline code before running the job. it helps to avoid lot of runtime issues with the build script.
+
++++++++++++++++++++++++++++++++++++++++++++
+our first declarative pipeline
++++++++++++++++++++++++++++++++++++++++++++
+pipeline{
+  agent any
+    stages{
+      stage('Welcome Step'){
+        steps{
+          echo 'welcome to jenkins scripting'
+        }
+      }
+    }
+}
+
+pipeline : entire declarative pipeline script should be written inside the pipeline block. it's a mandatory block.
+
+agent : specify where the jenkins build job should run. agent can be at pipeline level or stage level. it's mandatory to define an agent.
+
+stages : stages block constitutes different executable stage blocks. at least one stage block is mandatory inside stages block
+
+stage : stage block contains the acutal execution steps. stage block has to be defined within stages block. it's mandatory to have at least one stage block inside the stages block. also its mandatory to name each stage block & this name will be shown in  the stage view after we run the job.
+
+steps : steps block contains the acutal build step. it's mandatory to have at least one step block inside a stage block.
+
+depending on the agent's operating system (where jenkins job runs), we can use shell, bat, etc. inside the steps command.
+
+++++++++++++++++++++++++++++++++++++++
+build pipeline script
+++++++++++++++++++++++++++++++++++++++
+pipeline{
+  agent any
+  environment{
+    PATH = '$PATH:/opt/apache-maven-3.6.3/bin'
+  }
+  stages{
+    stage('Get Code'){
+	steps{
+           git branch: 'main',
+	   url: 'https://github.com/ashokitschool/maven-web-app-jenkins-pipeline.git'
+        }
+    }
+    stage('Build'){
+        steps{
+          sh 'mvn clean package'
+        }
+    }
+  }
+}
+******************************************************************************
+pipeline{
+  agent any
+  tools{
+    maven 'Maven 3.6.2'
+    jdk 'JDK 8.0'
+  }
+  environment{
+    PATH = '$PATH:/opt/apache-maven-3.6.2/bin'
+  }
+  stages{
+    stage('Get code'){
+	steps{
+           git branch: 'master'
+           url: 'https://github.com/pavanmatkar123/integrationproject.git'
+        }
+    }
+    stage('Build'){
+       steps{
+           sh 'mvn clean package'
+       }
+    }
+  }
+}
+*******************************************************************************
+build pipeline + sonar qube server - script
+*******************************************************************************
+pipeline{
+  agent any
+  environment{
+    PATH = '$PATH:/opt/apache-maven-3.6.3/bin'
+  }
+  stages{
+    stage('Get Code){
+       steps{
+           git 'https://github.com/ashokitshcool/maven-web-app.git'
+       }
+    }
+    stage('Build'){
+       steps{
+          sh 'mvn clean package'
+       }
+    }
+    stage('SonarQube analysis'){
+       steps{
+          withSonarQubeEnv('Sonar-Server-7.8'){
+             sh 'mvn sonar:sonar
+          }
+       }
+    }
+  }
+}
+************************************************************************************
+jenkins pipeliine (jenkins + maven + git hub + sonar + tomcat)
+************************************************************************************
+note: install ssh-agent plugin and generate code using pipeling syntax
+
+pipeline{
+  agent any
+  environment{
+    PATH = '$PATH:/opt/apache-maven-3.6.3/bin'
+  }
+  stages{
+     stage('Get Code'){
+         steps{
+             git 'https://github.com/ashokitschool/maven-web-app.git'
+         }
+     }
+     stage('Build'){
+          steps{
+             sh 'mvn clean package'
+          }
+     }
+     stage('SonarQube Analysis'){
+           steps{
+               withSonarQubeEnv('Sonar-Server-7.8'){
+                   sh 'mvn sonar:sonar'
+               }
+           }
+     }
+     stage('Code Deploy'){
+        steps{
+           sshagent(['Tomcat-Server-Agent']){
+		sh 'scp -o StrictHostKeyChecking=no target/01-maven-web-app.war ec2-user@13.235.68.29:/home/ec2-user/apache-tomcat-9.0.63/webapps'
+           }
+        }
+     }
+  }
+}
+**************************************************************************
+email notification in jenkins
+**************************************************************************
+-> we can configure email notification in jenkins
+-> with this option we can sent email notification to team members after jenkins job execution completed
+-> we need to configure SMTP properties to send emails
+-> go to manage jenkins
+-> add email extension server
+-> we will add company provided SMTP server details
+
+Note: for practice we can use GMAIL SMTP properties
+
+-> once SMTP properties added then we can configure email notification as 'Post Build Action' in jenkins job
+---------------------------------------------------------------------------------------------
+pipeline{
+  agent any
+  stages{
+     stage('Hello'){
+        steps{
+           echo "hello world"
+        }
+     }
+  }
+  post{
+      always{
+         mail to: 'ashokitschool@gmail.com',
+         subject: 'Test Email',
+         body: "Test"
+      }
+  }
+}
+-----------------------------------------------------------------------------------------------
+************************************************
+jenkins + git + maven + tomcat
+************************************************
+pipeline{
+  agent any
+  tools{
+    maven 'Maven 3.6.2'
+    jdk 'JDK 8.0'
+  }
+  environment{
+     PATH = '$PATH:/opt/apache-maven-3.6.0/bin'
+  }
+  stages{
+    stage('Get Code'){
+       steps{
+          git 'https://github.com/pavanmatkar123/integration.git'
+       }
+    }
+    stage('Build'){
+        steps{
+           sh 'mvn clean package'
+        }
+    }
+    stage('Code Deploy'){
+        steps{
+            sshagent(['Tomcat-Server']){
+                sh 'scp -o StrictHostKeyChecking=no target/integration.war ec2-user@43.205.126.56:/home/ec2-user/apache-tomcat-9.0.65/webapps'
+            }
+        }
+    }
+  }
+}
+**************************************************************************
+pipeline{
+  agent any
+  tools{
+     maven 'Maven 3.6.2'
+     jdk 'JDK 8.0.2'
+  }
+  environment{
+   PATH = '$PATH:/opt/apache-maven-3.6.3/bin'
+  }
+  stages{
+     stage('Get Code'){
+         steps{
+            git branch: 'main',
+            url: 'https://github.com/pavanmatkar/jenkins-project.git'
+         }
+     }
+     stage('SonarQube Analysis'){
+         //def scannerHome = tool 'SonarScanner 4.0';
+         steps{
+             withSonarQubeEnv('Sonar-Server-7.8'){
+           //if you have configured more than one global server connection, you can specify its name 
+           // sh '${ScannerHome}/bin/sonar-scanner'
+              sh 'mvn sonar:sonar'
+             }
+         }
+     }
+  }
+}
+***************************************************************************************
+pipeline{
+  agent any
+  tools{
+    maven 'Maven 3.6.2'
+    jdk 'JDK 8.0.2'
+  }
+  environment{
+    PATH = '$PATH:/opt/apache-maven-3.6.2/bin'
+  }
+  stages{
+    stage('Get Code'){
+       steps{
+         git branch: 'main',
+         url: 'https://github.com/pavanmatkar/jenkins-project.git'
+       }
+    }
+    stage('Build'){
+       stetps{
+           sh 'mvn clean package' ///if given error then give one clean package
+       }
+    }
+    stage('SonarQube analysis'){
+           //def scannerHome = tool 'SonarScanner 4.0';
+           steps{
+              withSonarQubeEnv('Sonar-Server-7.8'){
+           //if you have configured more than one global server connection, you can specify its name
+           // sh '${scannerHome}/bin/sonar-scanner'
+             sh 'mvn sonar:sonar'
+              }
+           }
+    }
+    stage('Code Deploy'){
+      steps{
+         sshagent(['Tomcat-Server']){
+            sh 'scp -o StrictHostKeychecking=no target/git-project.war ec2-user@43.205.177.19:/home/ec2-user/apache-tomcat-9.0.65/webapps'
+         }
+       }
+    }
+  }
+}
+***********************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
