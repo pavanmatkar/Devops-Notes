@@ -1,0 +1,142 @@
+
+#############################################
+Deploying Spring Boot with MySQL in K8S Cluster
+#############################################
+
+
+# Create Config Map
+$ kubectl apply -f configMap.yml
+
+# Create Secret
+$ kubectl apply -f secrets.yml
+
+# Create Persistent Volume
+$ kubectl apply -f pv.yml
+
+# Create Persistent Volume Claim
+$ kubectl apply -f pvc.yml
+
+# Create DB Deployment
+$ kubectl apply -f db-deployment.yml
+
+# Get the pods which are created
+$ kubectl get pods
+
+# Get into DB pod
+$ kubectl exec -it <pod-name> bash
+
+$ mysql -u root -p weshopify-app
+
+Note: Enter the password as root
+
+$ show databases;
+
+$ use weshopify-app;
+
+$ show tables;
+
+
+# Once database checking completed then perform app deployment
+
+$ kubectl apply -f app-deployment.yml
+
+# check the services running
+$ kubectl get svc
+
+
+Note: Enable nodeport in security group
+
+
+=> Access the application in browser
+
+	URL : http://node-ip:nodeport/
+
+
+
+#######
+RBAC
+#######
+
+-> RBAC means Role Based Access
+
+-> User accounts will be created and permissions will be provided to perform the actions
+
+Step-1) Create
+
+Step-2) Role Binding
+
+
+
+
+############################
+Kubernetes web dashboard
+##########################
+
+
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/aio/deploy/recommended.yaml
+
+$ kubectl -n kubernetes-dashboard get pods -o wide
+
+$ kubectl -n kubernetes-dashboard get svc
+
+# Edit k8s dashboard service and change it to NodePort
+$ kubectl -n kubernetes-dashboard edit svc kubernetes-dashboard
+
+$ kubectl get pods -o wide -n kubernetes-dashboard
+
+
+# access k8s web ui dashboard 
+
+URL : https://node-ip:node-port/
+
+
+#create admin user with below yml
+
+$ vi create-user.yml
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+...
+
+
+$ kubectl apply -f create-user.yml
+
+
+#create cluster role binding
+$ vi cluster-role-binding.yml
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+...
+
+$ kubectl apply -f cluster-role-binding.yml
+
+
+# Get the bearer token
+$ kubectl -n kubernetes-dashboard create token admin-user
+
+
+Note: From web dashboard we can perform all kubernetes related activities (deployments, scaling etc..)
+
+
+
+
+
+
+
+
+

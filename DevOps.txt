@@ -1162,6 +1162,328 @@ pipeline{
     }
   }
 }
+#####################################################################################################
+##########################################################################################################################################################################################################
+Sonar Qube
+++++++++++
+-> sonar qube is contineous code quality checking tool
+-> we can do code review using sonar qube tool
+
+what is code coverage & code review
+-----------------------------------
+code coverage: how many lines of source code is tested by unit test cases
+note: industry standard code coverage is 80%
+code review: checking coding conventions
+
+-> sonar qube is an open source software quality management tool
+-> it will contineously analyse and measure quality of the source code
+-> it will generate code review report in html format / pdf format
+-> it is a web based tool and it supports 29 programming languages
+-> it will support muli os platform
+-> it will support multiple databases (mysql, oracle, sql server, postgre sql...)
+-> it supports multiple browsers
+-> sonar qube will identify below category of issues in project source code
+
+1) duplicate code
+2) coding standards
+3) unit tests
+4) code coverage
+5) complex code
+6) potential bugs
+
+-> initially sonar qube was developed only for java projects
+-> today sonar qube is supporting for 29 languages
+
+open source: java, java script, c#, web technologies (html, jsp), xml, python, groovy, php, puppet 
+
+commercial: abap, c, c++, cobol, pl/sql, visual basic, vb.net, swift etc...
+
+environment setup
++++++++++++++++++
+-> java is the pre-requesite software
+7.6 --> java 1.8v
+7.8 - 8.x --> java 11v
+note: we can check this compatability in official sonar website
+
+hardware requirements
++++++++++++++++++++++
+minimum ram: 2 GB
+
+t2.micro --> 1 gb ram
+t2.medium --> 4 gb ram
+
+sonar qube architecture
++++++++++++++++++++++++
+1) sonarqube scanner
+(it will take source code as input and it will generate report)
+
+2) sonarqube server
+-> sonarqube server contains 3 components
+ 1) compute engine
+ 2) database
+ 3) webserver
+ 4) search engine
+          - compute engine 
+                           - vulnerabilities
+                           - bugs
+                           - code smells
+note: compute engine will store report into h2 db (we can configure external db also)
+	- webserver (it will display report in webserver)
+note: developers will see sonar report and will fix the issues
+	- search engine (it will give search results)
+
+-> create ec2 instance with 4gb ram (t2.medium)
+-> connect with ec2 instance
+-> check space (free -h)
+
+$ sudo su
+$ yum install wget -y
+$ cd /opt
+$ sudo yum install java-1.8.0-openjdk 
+$ java -version
+$ yum install wget unzip -y
+$ wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.8.zip
+$ unzip sonarqube-7.8.zip
+
+note: sonarqube server will not run with root user
+
+-> create new user
+$ useradd sonar
+$ visudo
+
+-> configure sudo user without pwd
+sonar ALL=(ALL) NOPASSWD: ALL
+
+-> change ownership for sonar folder
+$ chown -R  sonar:sonar /opt/sonarqube-7.8/
+$ chmod -R 775 /opt/sonarqube-7.8
+$ su - sonar (switching to sonar user)
+
+-> go to bin directory then go to linux directory and run sonar server
+$ sh sonar.sh start
+-> check sonar server status
+$ sh sonar.sh status
+
+note: sonar server runs on 9000 port number by default
+
+-> enable port number in ec2 vm - security group
+-> access sonar server in browser
+	url : http://vm-ip:9000/
+-> default credentials of sonar user is admin & admin
+-> after login, we can go to security and we can enable force authentication.
+
+note: once your work got completed then stop your ec2 instance because we have t2.medium so bill will be generated.
+-----------------------------------------------------------------------------------------------------
+-> start sonar server
+-> go to sonar server bin folder
+-> switch to sonar user
+$ sh sonar.sh start
+
+note: search engine can't run with root user
+
+$ sh sonar.sh status
+
+note: if sonar not started, then go to log file and see
+
+$ sudo rm -rf /opt/sonar-folder/temp/
+$ cd ../bin/
+$ sh sonar.sh start
+$ sh sonar.sh status
+-> access sonar server in browser and login into that
+
++++++++++++++++++++++++++++++++
+integrate sonar server with java maven app
++++++++++++++++++++++++++++++++
+-> configure sonar properties under <properties/> tag in "pom.xml"
+
+<properties>
+<sonar.host.url>http://3.110.114.186:9000/</sonar.host.url>
+<sonar.login>admin</sonar.login>
+<sonar.password>admin</sonar.password>
+</properties>
+
+-> go to project pom.xml file location and execute below goal
+	$ mvn sonar:sonar
+-> after build success, goto sonar dashboard and verify that
+
+note: instead of username and pwd we can configure sonar token in pom.xml
+
+++++++++++++++++++++++++++
+working with sonar token
+++++++++++++++++++++++++++
+-> goto sonar -> login -> click on profile -> my account -> security -> generate token
+-> copy the token and configure that token in pom.xml file like below
+
+<sonar.host.url>
+http://3.110.114.186:9000/</sonar.host.url>
+<sonar.login>760ebb6f81398a6ea6949adf4dc2291347377d3e</sonar.login>
+
+-> then build the project using 'mvn sonar:sonar' goal
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+-> for each language sonar qube provided one quality profile with set of rules
+
+-> quality profile means set of rules to perform code review
+
+-> we can create our own quality profile based on project requirement
+
+-> create one quality profile
+
+	- Name : SBI_Project
+	- Language : Java
+	- Parent : None
+
+Note: we can make our quality profile as default one then it will be applicable for all the projects which gets reviewed under this sonar server.
+
+note: if we have any common ruleset for all projects then we can create one quality profile and we can use that as parent quality profile for other projects.
+
+-> we can configure quality profile to specific project
+	
+	-> click on project name
+	-> go to administration
+	-> click on quality profile
+	-> select profile required
+
+------------------------------------------------------------
+Quality Gate
+------------------------------------------------------------
+-> quality gate represents set of metric to identify proje t quality is passed or failed
+-> every project quality gate should be passed
+-> in sonar we have default quality gate
+-> if required, we can create our own quality gate also
+
+note: if project quality gate is failed then we should not accept that code for deployment
+------------------------------------------------------------
+-> if project is having sonar issues then development team is responsible to fix those issues
+-> as a devops engineer, we will perform code review and we will send code review report to development team (we will send sonar server url to development team)
+
+++++++++++++++++++++++++
+sonar server with jenkins integration
+++++++++++++++++++++++++
+
+prerequisites
+--------------
+1) sonar qube server
+2) jenkins server
+
+-> on sonarqube server generate a token
+-> on jenkins server
+	- install apache maven
+	- install sonar qube scanner plugin
+	- configure sonarserver with token
+	- install sonarqube scanner
+	- run jenkins pipeline job
+
+-> connect to jenkins server vm using mobaxterm and start sonar server
+-> access sonar server in browser & generate token
+
+-> connect to jenkins server using mobaXterm
+-> execute below commands in jenkins server vm
+$ sudo su 
+$ cd /opt
+$ wget https://mirrors.estointernet.in/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+$ tar -xvf apache-maven-3.6.3-bin.tar.gz
+
+-> manage jenkins -> plugins -> available -> sonar qube scanner plugin -> install it
+
+-> manage jenkins -> configure system -> sonar qube servers -> add sonar qube server
+	
+	- Name : Sonar-Server-7.8
+	- Server URL : http://52.66.247.11:9000/(give your sonar server url here)
+	- add sonar server token
+	(token we should add as secret text)
+	(save it)
+-> manage jenkins ->  global tools configuration -> sonarqube scanner
+	- Name : Sonar-Scanner-4.7
+	- Select Sonar Version (SonarQube Scanner - 4.7)
+	(save it)
+
+-> goto jenkins dashboard -> click on 'New Item' -> enter item name -> select pipeline -> click on next
+
+-> enter below pipeline script in given text box 
+
+pipeline{
+	agent any
+	environment{
+		PATH = '$PATH:/opt/apache-maven-3.6.3/bin'
+	}
+	stages{
+		stage('GetCode'){
+			steps{
+				git 'https://github.com/ashokitschool/maven-web-app.git'
+			}
+		}
+		stage('Build'){
+			steps{
+				sh 'mvn clean package'
+			}
+		}
+		stage('SonarQube analysis'){
+			//def scannerHome = tool 'SonarScanner 4.0';
+			steps{
+				withSonarQubeEnv('Sonar-Server-7.8'){
+					//if you have configured more than one global server connection, you can specify its name
+				sh '${scannerHome}/bin/sonar-scanner'
+				sh 'mvn sonar:sonar'
+				}
+			}
+		}
+	}
+}
+------------------------------------------------------------------------------------------------------------------------
+what is code review
+what is sonar
+how to setup sonar server
+sonar admin login
+sonar rules
+sonar quality profile
+sonar custom quality profile
+making custom profile as default
+using quality profile for perticular project
+sonar quality gate
+creating custom quality gate
+sonar integration with maven project
+sonar token generation
+sonar server integration with jenkins using pipeline script
+------------------------------------------------------------------------------------------------------------------------
+
+pipeline{
+	agent any
+	tools{
+		maven 'Maven 3.6.2'
+		jdk 'JDK 8.0.2'
+	}
+	environment{
+		PATH = '$PATH:/opt/apache-maven-3.6.3/bin'
+	}
+	stages{
+		stage('GetCode'){
+			steps{
+				git branch: 'main'
+				url: 'https://github.com/pavanmatkar/jenkins-project.git'
+			}
+		}
+		stage('Build'){
+			steps{
+				sh 'mvn clean package'	///if gives error then give only clean package
+			}
+		}
+		stage('SonarQube analysis'){
+			//def ScannerHome = tool 'SonarScanner 4.0';
+			steps{
+				withSonarQubeEnv('Sonar-Server-7.8'){
+					//if you have configured more than one global server connection, you can specify its name
+					sh '${ScannerHome}/bin/sonar-scanner'
+					sh 'mvn sonar:sonar'
+				}
+			}
+		}
+	}
+}
+
+########################################################################################################################################################################################################################################################
+############################################################################################################################
 *******************************************************************************
 build pipeline + sonar qube server - script
 *******************************************************************************

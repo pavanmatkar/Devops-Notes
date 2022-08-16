@@ -91,7 +91,7 @@ Sonar Qube Architecture
 
        - Compute Engine
 				- Vulnerabilities
-			    - Bugs
+			     - Bugs
 				- Code Smells
 		
 
@@ -170,7 +170,7 @@ $ sh sonar.sh status
 
 Note: If sonar not started, then go to log file and see 
 
-$ sudo rum -rf /opt/sonar-folder/temp/
+$ sudo rm -rf /opt/sonar-folder/temp/
 
 $ cd ../bin/
 
@@ -387,7 +387,7 @@ pipeline{
          }        
        stage('Build'){
             steps{
-                sh 'mvn clean package' ///if gives error then give one clean package 
+                sh 'mvn clean package' ///if gives error then give only clean package 
             }
          }
 
