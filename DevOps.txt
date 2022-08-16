@@ -1969,8 +1969,55 @@ resource 'aws_db_instance" 'default'{
 	skip_final_snapshot=true
 }
 
+------------------------------------------------------------
+############################################################
+############################################################
+############################################################
+############################################################
+############################################################
+------------------------------------------------------------
 
++++++++++++++++++++
+Ansible Tutorial
++++++++++++++++++++
 
+1) what is ansible
+2) configuration management
+3) push based vs pull based
+4) how to install ansible
+5) host inventory
+6) ansible modules
+7) yaml
+8) playbooks
+9) hands on
+10) conclusion
+
+configuration management
+++++++++++++++++++++++++
+it is a method through which we automate admin tasks. configuration management tool turns your code into infrastructure.
+so your code would be testable, repeatable and versionable.
+
+Infrastructure refers to the composite of -
+
+software
+network
+people
+process
+
++++++++++++++
+Ansible
++++++++++++++
+-> ansible is one among the devops configuration management tools which is famous for its simplicity
+-> it is an opensource software developed by michael dehaan and its ownership is on redhat
+-> ansible is an open source IT configuration management, deployment & orchestration tool.
+-> this tool is very simple to use yet powerful enough to automate complex multi-tier IT application environments.
+-> ansible is an automation tool that provides a way to define infrastructure as code.
+-> infrastructure as code (IAC) simply means that managing infrastructure by writing code rather that using manual processes.
+-> the best part is that you don't even need to know the commands used to accomplish a perticular task.
+-> you just need to specify what state you want the system to be in and ansible will take care of it.
+-> the main components of ansible are playbooks, configuration management and deployment.
+-> ansible uses playbooks to automate deploy, manage, build, test and configure anything.
+-> ansible was written in python.
 
 
 
