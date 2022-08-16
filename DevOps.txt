@@ -1685,6 +1685,292 @@ pipeline{
 }
 ***********************************************************************************
 
+------------------------------------------------------------############################################################
+############################################################
+############################################################
+############################################################
+############################################################
+------------------------------------------------------------
+
+Terraform
+++++++++++
+
+-> terraform is an open source s/w created by Hashicorp and written in Go programming language
+-> terraform is an infrastructure as code (IaC) software tool,
+-> infrastructure as code is the process of managing infrastructure in a file or files rather than manually configuring resources in a user interface (UI)
+
+-> In Terraform resources are nothing but virtual machines, elastic ip, security groups, network interfaces
+
+-> terraform code is written in the hashicorp configuration language (HCL) in files with the exension .tf
+
+-> terraform allows users to use Hashicorp configuration language (HCL) to create the files containing definitions of their desired resources
+
+-> Terraform supports all most all cloud providers (AWS, AZURE, GCP, OpenStack etc..)
+
+-> to automate infrastructure creation we will use terraform.
+
+Terraform vs Cloud Formation
+++++++++++++++++++++++++++++
+
+-> terraform developed by hashicorp
+-> cloudformation developed by aws
+
+-> terraform supports many cloud providers
+-> cloud formation will support only in aws
+
+-> terraform uses hashicorp configuration language (HCL)
+which build by hashicorp. it is fully compatible with JSON.
+
+-> aws cloud formation utilizes either json or yaml. cloud formation has a limit of 51,000 bytes for the template body itself.
+
+Terraform vs Ansible
+++++++++++++++++++++
+-> terraform developed by Hashicorp
+-> ansible is also an open source software
+
+-> terraform is an infrastructure as a code, which means they are designed to provision the servers themselves.
+-> ansible is a configuration management tool. which means ansible designed to install and manage software on existing servers.
+
+-> terraform is ideal for creating, managing, and improving infrastructure.
+-> ansible is ideal for software provisioning, application deployment and configuration management.
+
+pre-requisites
+++++++++++++++
+1) any cloud provider (AWS, azure, gcp, openstack etc..)
+2) iam user account (secret key and access key)
+3) iam user should have amazonEc2FullAccess
+
+
+steps:
+1) create ec2 instance (redHat linux)
+2) connect to ec2 vm using mobaxterm
+3) switch to root user
+	$ sudo su -
+4) install unzip software
+	$ yum install wget install unzip vim -y
+5) download terraform software
+	(https://www.terraform.io/downloads)
+$ sudo yum install -y yum-utils
+$ sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+$ sudo yum -y install terraform
+
+6) check terraform version
+$ terrafrm -v
+7) create iam user with programmatic access and provide 'AmazonEc2FullAccess'
+8) download secret key and access key
+9) write terrafom script
+$ mkdir terraformscript
+$ cd terraformscript
+4 vi FirstTFScript.tf
+
+provider 'aws'{
+	region='ap-south-1'
+	access_key='your-access-key'
+	secret_key='your-secret-key'
+}
+
+resource 'aws_instance' 'AWSServer'{
+	ami='ami-05c8ca4485f8b138a'
+	instance_type='t2.micro'
+	key_name='linux'
+	security_groups=['launch-wizard-1']
+	tags={
+		Name='Terraform Server'
+	}
+}
+
+10) initialize terraform using init command
+	$ terraform init
+11) format your script (indent spaces)
+	$ terraform fmt
+12) validate your script
+	$ terraform validate
+13) create execution plan for your script
+	$ terraform plan
+14) create infrastructure
+	$ terraform apply
+	$ terraform -auto-aprove
+note: when the script got executed it will store that state in a file. if we execute script again it will not create. if you delete that state file and execute script again then it will create it.
+15) destroy infrastructure
+	$ terraform destroy -auto-aprove
+-> in first script we kept provider and resources info in single script file. we can keep provider and resources information in separate files.
+
+Ex : provider.tf & main.tf
+
+
+#Script to create multiple Ec2 instances
+
+provider 'aws'{
+	region='ap-south-1'
+	access_key='your-access-key'
+	secret_key='your-secret-key'
+}
+
+resource 'aws_instance' 'AWSVM_Server'{
+	count='3'
+	ami='ami-05c8ca4485f8b138a'
+	instance_type='t2.micro'
+	key_name='linux'
+	security_groups=['ashokit_security_group']
+	tags={
+		Name='REDHAT-EC2-VM1'
+	}
+}
+
+
+Note: once it is created, then destroy infrastructure using below command
+$ terraform destroy -auto-aprove
+
+variables in typescript
++++++++++++++++++++++++
+-> we can maintain variables in separate file
+$ vi vars.tf
+
+variable 'ami'{
+	description='Amazon Machine Image Value'
+	default='ami-05c8ca4485f8b138a'
+}
+
+variable 'instance_type'{
+	description='Amazon Instance Type'
+	default='t2.micro'
+}
+
+variable 'instance_count'{
+	description='Total No. of Instances'
+	default='2'
+}
+
+create main.tf file using variables
+$ vi main.tf
+provider 'aws'{
+	region='ap-south-1'
+	access_key='AKIA4GJG'
+	secret_key='d04co9pmnE5xNj8xiubpUPhI'
+}
+
+resource 'aws_instance' 'AWSServer'{
+	count'${var.instances_count}'
+	ami='${var.ami}'
+	instance_type='${var.instance_type}'
+	key_name='linux'
+	security_groups=['launch-wizard-1']
+	tags={
+		Name='EC2 VM - ${count.index}'
+	}
+}
+
+note: we can supply variables in runtime also
+-> remove instances_count variable from var.tf file and pass like below
+$ terraform apply -var instances_count='2' -auto-aprove
+
+Comments in Terraform Script
+++++++++++++++++++++++++++++
+# - single line comment
+// - single line comment (java style)
+/* and */ multi line comments
+
+Dealing with secret key and access key
++++++++++++++++++++++++++++++++++++++++
+-> we have configure secret_key and access_key in terraform script file. instead of that we can configure them as environment variables.
+
+$ export AWS_ACCESS_KEY_ID='AKIA4MGQ5UW7B'
+$ export 'AWS_SECRET_ACCESS_KEY='kzpje2T8s1lHsywFLTOI89XU7sRy8'
+
+-> to verify environment variables we can use echo command
+$ echo $AWS_ACCESS_KEY
+$ echo $AWS_SECRET_ACCESS_KEY
+
+-> now remove credentials from terraform script and execute it.
+
+note: we are setting provider credentials in terminal so these variables will be available for current session. if we want to set permanently add them in .bashrc file
+
+working with user data
+++++++++++++++++++++++
+
+-> it is used to execute script when instance launched for first time.
+-> create userdata in one file
+$ vi installHttpd.sh
+#!/bin/bash
+sudo su
+yum install httpd -y
+cd /var/www/html
+echo "<html><h1>welcome to ashok it..!</h1></html>" > index.html
+service httpd start
+
+$ chmod u+x installHttpd.sh
+-> create main script in main.tf file
+-> vi main.tf
+
+provider 'aws'{
+	region='ap-south-1'
+	access_key='your-access-key'
+	secret_key='your-secret-key'
+}
+
+resource 'aws_instance' 'AWSServer'{
+	ami='ami-05c8ca4485f8b138a'
+	instance_type='t2.micro'
+	key_name='linux'
+	security_groups=['ashokit_security_group']
+	user_data='${file("installHttpd.sh")}'
+	tags={
+		Name='Terraform Server'
+	}
+}
+
+++++++++++++++++++++++++++++++
+creating s3 bucket using terraform script
+++++++++++++++++++++++++++++++
+-> add s3 policy for iam user
+-> execute below terraform script to create s3 bucket in aws 
+
+provider 'aws'{
+	region='ap-south-1'
+	access_key='your_access_key'
+	secret_key='your_secret_key'
+}
+
+resource 'aws_s3_bucket' 's3bucketashokit'{
+
+bucket='s3bucketashokit'
+acl='private'
+
+versionining{
+	enabled=true
+	}
+
+tags={
+	Name='S3 Bucket By Ashok'
+	}
+}
+
++++++++++++++++++++++++++++++++++++++++++
+create mysql db in aws using terraform
++++++++++++++++++++++++++++++++++++++++++
+-> provider RDS access for IAM user
+-> execute below script to create mysql db in aws cloud
+
+provider 'aws'{
+	region='ap-south-1'
+	access_key='your-access-key'
+	secret_key='your-secret-key'
+}
+
+resource 'aws_db_instance" 'default'{
+	allocated_storage= 100
+	engine='mysql'
+	engine_version='5.7'
+	instance_class='db.t3.micro'
+	name='mydb'
+	username='foo'
+	password='foobarbaz'
+	parameter_group_name='default.mysql5.7'
+	skip_final_snapshot=true
+}
+
+
+
 
 
 

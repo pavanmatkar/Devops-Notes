@@ -39,7 +39,7 @@ Terraform Vs Ansible
 -> Ansible is also an open source software
 
 -> Terraform is an infrastructure as a Code, which means they are designed to provision the servers themselves.
--> Ansible is a configuration management tool. Which means ansibled designed o install and manage software on existing servers.
+-> Ansible is a configuration management tool. Which means ansible designed to install and manage software on existing servers.
 
 -> Terraform is ideal for creating, managing and improving infrastructure.
 -> Ansible is ideal for software provisioning, application deployment and configuration management.
@@ -53,6 +53,8 @@ Pre-Requisites
 3) IAM User should have AmazonEc2FullAccess
 
 
+Steps:
+-----
 
 1) Create EC2 instance (RED HAT Linux)
 
@@ -130,7 +132,7 @@ Note: When the script got executed it will store that state in a file. If we exe
 
 -> In first script we kept provider and resources info in single script file. We can keep provider and resources information in seperate files
 
-Ex : proder.tf & main.tf
+Ex : provider.tf & main.tf
 
 
 
@@ -260,7 +262,7 @@ service httpd start
 $ chmod u+x installHttpd.sh
 
 
--> create main scrit in main.tf file
+-> create main script in main.tf file
 
 -> vi main.tf
 
