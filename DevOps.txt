@@ -1482,8 +1482,8 @@ pipeline{
 	}
 }
 
-########################################################################################################################################################################################################################################################
-############################################################################################################################
+############################################################################################################################################################################################################################################################################################################
+####################################################################################################################################################################################
 *******************************************************************************
 build pipeline + sonar qube server - script
 *******************************************************************************
@@ -2019,16 +2019,261 @@ Ansible
 -> ansible uses playbooks to automate deploy, manage, build, test and configure anything.
 -> ansible was written in python.
 
++++++++++++++++++++++
+Ansible Features
++++++++++++++++++++++
+-> Ansible manages machines in an agent-less manner using SSH
+-> Built on top of python and hence provides a lot of python's functionality
+-> YAML based playbooks
+-> uses SSH for secure connections
+-> follows push based architecture for sending configuration related notifications
+-> follows push based architecture for sending configuration related notifications
 
+++++++++++++++++++++++++++++++++
+push based vs pull based
+++++++++++++++++++++++++++++++++
+-> tools like puppet and chef are pull based
+-> agents on the server periodically checks for the configuration information from central server (master)
+-> ansible is push based
+-> central server pushes the configuration information on target servers.
 
++++++++++++++++++++++++++
+how ansible works?
++++++++++++++++++++++++++
+ansible works by connecting to your nodes and pushing out a small program called ansible modules to them.
 
+then ansible executed these modules and removed them after finished. the library of modules can reside on any machine, and there are no daemons, servers, or databases required.
 
+the management node is the controlling node that controls the entire execution of the playbook.
 
+the inventory file provides the list of hosts where the Ansible modules need to be run.
 
+The management node makes an SSH connection and executes the small modules on the host's machine and install the software.
 
+Ansible removes the modules once those are installed so expertly.
 
+It connects to the host machine executes the instructions, and if it is successfully installed, then remove that code in which one was copied on the host machine.
 
+ansible basically consists of three components
 
+ansible requires the following components in order to automate network infrastructure.
+
+1) controlling nodes
+2) managed node
+3) ansible playbook
+
+++++++++++++++++++++++++++++
+controlling nodes
+++++++++++++++++++++++++++++ 
+are usually linux bastion servers that are used to access the switches/routers and other network devices.
+these network devices are referred to as the managed nodes.
+
++++++++++++++++++++
+managed nodes
++++++++++++++++++++
+managed nodes are stored in the hosts file for ansible automation
+
+++++++++++++++++++++++
+Ansible Playbook
+++++++++++++++++++++++
+Ansible Playbooks are expressed in YAML format and serve as the repository for the various tasks that will be executed on the managed nodes (hosts).
+
+Playbooks are a collection of tasks that will be run on one or more hosts.
+
+++++++++++++++++++++++
+Inventory file
+++++++++++++++++++++++
+Ansible's inventory hosts file is used to list and group your servers.
+
+its default location is /etc/ansible/hosts
+
+Note: In inventory file we can mention IP address or hostname also
+
++++++++++++++++++++++++++++++++++++++++++++
+few important points about inventory file
++++++++++++++++++++++++++++++++++++++++++++
+-> comments begins with '#' character
+-> blank lines are ignore
+-> groups of hosts are delimited by '[header]' elements
+-> you can enter hostnames or ip addresses
+-> a hostname/ip can be a member of multiple groups
+-> ungrouped hosts are specifying before any group headers like below
+
+Ansible's inventory hosts file is used to list and group your servers. Its default location is /etc/ansible/hosts
+
+Note: In inventory file we can mention IP address or hostname also
+
+Sample Inventory file
+++++++++++++++++++++++
+# Blank lines are ignore
+
+# Ungrouped hosts are specifying before any group headers like below
+
+192.168.122.1
+192.168.122.2
+192.168.122.3
+
+[webservers]
+192.168.122.1
+#192.168.122.2
+192.168.122.3
+
+[dbserver]
+192.168.122.1
+192.168.122.2
+ashokit-db1.com
+ashokit-db2.com
+
+++++++++++++++++++
+Ansible setup
+++++++++++++++++++
+=> create 2 redhat systems in aws (free tier eligible)
+1 - ansible system
+1 - host system
+
+=> connect to all the systems and create ansible user 
+
+$ sudo useradd ansible
+$ sudo passwd ansible
+
+$ pwd
+  confirm pwd:
+
+$ sudo visudo 
+ansible ALL=(ALL) NOPASSWD: ALL
+
+$ sudo vi /etc/ssh/sshd_config
+
+-> comment PasswordAuthentication no
+-> un-comment PasswordAuthentication yes
+
+-> restart the server
+
+$ sudo service sshd restart
+
+note: do the above steps in all the 2 machines
+
+++++++++++++++++++++++++++++++++++
+install ansible in control node
+++++++++++++++++++++++++++++++++++
+-> switch to ansible user
+
+$ sudo su ansible
+
+-> install python
+
+$ sudo yum install python3 -y
+
+-> check python version
+
+$ python --version (it will fail bcz we used python3)
+$ python3 --version
+
+-> update python alternatives
+
+$ sudo alternatives --set python /usr/bin/python3
+
+-> check python version
+
+$ python --version
+
+-> install pip (it is a python package manager)
+
+$ sudo yum -y install python3-pip
+
+-> install ansible using python pip
+
+$ pip3 install ansible --user
+
+-> verify ansible version
+
+$ ansible --version
+
+-> create ansible folder under /etc
+
+$ sudo mkdir /etc/ansible
+
+-> create ansible.cfg file under /etc/ansible and paste complete content from below git link.
+
+open:
+https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
+
+copy the content and paste it in ansible.cfg file with below command
+
+$ sudo vi /etc/ansible/ansible.cfg
+
+-> create hosts file under /etc/ansible.cfg sample content can found in below git link
+
+open : 
+https://raw.githubusercontent.com/ansible/ansible/devel/examples/hosts
+
+copy the content and paste it in hosts file with below command
+
+$ sudo vi /etc/ansible/hosts
+
+************************************************************
+with this ansible setup completed
+************************************************************
+
+1) update host inventory in ansible server to add host servers details to test connection
+
+$ sudo vi /etc/ansible/hosts
+
+$ connect using the username and password
+HOST-NODE-IP ansible_user=ansible ansible_password=password
+
+2) use ping module to test ansible and after successful run you can see the below output.
+
+$ ansible all -m ping
+
+note: install sshpass in ansible server if you get below error
+
+'to use the 'ssh' connection type with passwords, you must install the sshpass program
+
+$ sudo yum install sshpass
+
+$ ansible all -m ping
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+generate ssh key in control node and copy ssh key into host node
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+1) now generate ssh key in ansible server (control node):
+
+$ sudo su ansible
+$ ssh-keygen
+
+2) copy it to host servers as ansible user:
+
+$ ssh-copy-id ansible@<Host-Private-IP>
+
+EX: $ ssh-copy-id ansible@172.31.43.23
+
+note: repeat below command by updating host ip for all the host servers.
+
+3) update host inventory in ansible server to add host servers details.
+
+# vi /etc/ansible/hosts
+
+# connect using username and password
+# 192.168.1.105 ansible_user=ansible
+ansible_password=password
+
+# connect using username and pem(make sure have pem file at given path)
+
+# 172.31.35.23 ansible_user=ec2-user
+ansible_ssh_private_key_file=~/aws.pem
+
+# if ssh keys are copied
+172.31.43.23
+
+4) use ping module to test ansible and after successful run you can see the below output.
+
+$ ansible all -m ping
+
+++++++++++++++++++++++++++++++++
+Ansible AD-HOC commands
+++++++++++++++++++++++++++++++++
+-> swi
 
 
 
